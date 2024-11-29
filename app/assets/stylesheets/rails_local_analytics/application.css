@@ -1,0 +1,10 @@
+input, select {
+  border-radius: 5px;
+  border: 1px solid #333;
+  background: white;
+  padding: 2px 5px;
+}
+
+.tablesorter-header{
+  background-image: none !important;
+}
