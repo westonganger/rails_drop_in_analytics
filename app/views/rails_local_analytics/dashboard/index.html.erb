@@ -57,7 +57,7 @@
 
         <td>
           <% total = row.last %>
-          <%= total.to_fs(:delimited) %>
+          <%= number_with_delimiter(total) %>
         </td>
 
         <td>
@@ -85,7 +85,7 @@
             <% prev_period_row_index = @prev_period_results.index{|prev_period_row| row[0..-2] == prev_period_row[0..-2] } %>
 
             <% if prev_period_row_index.nil? %>
-              +<%= total.to_fs(:delimited) %>
+              +<%= number_with_delimiter(total) %>
             <% else %>
               <% prev_period_row = @prev_period_results.delete_at(prev_period_row_index) %>
 
@@ -93,9 +93,9 @@
               <% diff = total - prev_period_total %>
 
               <% if diff >= 0 %>
-                +<%= diff.to_fs(:delimited) %>
+                +<%= number_with_delimiter(diff) %>
               <% else %>
-                <%= diff.to_fs(:delimited) %>
+                <%= number_with_delimiter(diff) %>
               <% end %>
             <% end %>
           <% end %>
