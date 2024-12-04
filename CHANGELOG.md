@@ -2,6 +2,7 @@
 
 ### Unreleased
 - [View Diff](https://github.com/westonganger/rails_local_analytics/compare/v0.1.0...master)
+- [#9](https://github.com/westonganger/rails_local_analytics/pull/9) - Add links to load difference for paginated responses, use type instead of class name as keys in `:custom_attributes`, Remove table sorting capabilities, remove jquery
 - [#8](https://github.com/westonganger/rails_local_analytics/pull/8) - Improve performance significantly using SQL GROUP_BY and pagination of 1000 per page, app tested using seed of 100,000 records
 - [#7](https://github.com/westonganger/rails_local_analytics/pull/7) - Create separate tabs for page/site analytics, improve routes, fix multi_search, add more time quicklinks
 - [#6](https://github.com/westonganger/rails_local_analytics/pull/6) - Inline javascript file

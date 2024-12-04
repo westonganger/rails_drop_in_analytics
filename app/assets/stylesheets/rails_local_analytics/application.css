@@ -1,3 +1,7 @@
+body{
+  padding-bottom: 20px;
+}
+
 input, select {
   border-radius: 5px;
   border: 1px solid #333;
@@ -5,6 +9,10 @@ input, select {
   padding: 2px 5px;
 }
 
-.tablesorter-header{
-  background-image: none !important;
+button.is-link{
+  border: none;
+  background: none;
+  color: #2780e3;
+  text-decoration: underline;
+  cursor: pointer;
 }

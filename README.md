@@ -118,8 +118,8 @@ class ApplicationController < ActionController::Base
     RailsLocalAnalytics.record_request(
       request: request,
       custom_attributes: { # optional
-        TrackedRequestsByDaySite.name => site_based_attrs,
-        #TrackedRequestsByDayPage.name => {},
+        site: site_based_attrs,
+        page: {},
       },
     )
   end
@@ -183,8 +183,8 @@ class ApplicationController
   def record_page_view
     # perform other logic and call RailsLocalAnalytics.record_request
 
-    TrackedRequestsByDayPage.where("date < ?", 3.months.ago).delete_all
-    TrackedRequestsByDaySite.where("date < ?", 3.months.ago).delete_all
+    TrackedRequestsByDayPage.where("day < ?", 3.months.ago).delete_all
+    TrackedRequestsByDaySite.where("day < ?", 3.months.ago).delete_all
   end
 end
 ```

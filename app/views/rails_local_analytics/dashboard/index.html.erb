@@ -1,3 +1,5 @@
+<% data_columns = params[:group_by].present? ? [params[:group_by]] : @klass.display_columns %>
+
 <%= form_tag url_for(params.except(:start_date, :to).to_unsafe_hash), method: "get", class: "well well-sm", id: "search-form" do %>
   <div>
     <label style="margin-right: 10px;">Group By: <%= select_tag :group_by, options_for_select([["All", nil]] + @klass.display_columns.map{|x| [x.titleize.sub("Url ", "URL "), x]} , params[:group_by]) %></label>
@@ -27,32 +29,27 @@
 
 <h2>Requests by <%= params[:type].titleize %></h2>
 
-<table class="table table-striped table-condensed table-sortable">
+<table class="table table-striped table-condensed">
   <thead>
-    <% if params[:group_by].present? %>
+    <% data_columns.each do |header| %>
       <th>
-        <%= params[:group_by].titleize.sub("Url ", "URL ") %>
-        <span title="Sort column">&varr;</span>
+        <%= header.sub("Url ", "URL ") %>
       </th>
-    <% else %>
-      <% @klass.display_columns.each do |col_name| %>
-        <th>
-          <%= col_name.titleize.sub("Url ", "URL ") %>
-          <span title="Sort column">&varr;</span>
-        </th>
-      <% end %>
     <% end %>
 
     <th>
-      Total <span title="Difference compared to previous period">(Difference)</span>
-      <span title="Sort column">&varr;</span>
+      Total
+    </th>
+
+    <th>
+      Difference from previous period
     </th>
   </thead>
 
   <tbody>
-    <% @results.each do |row| %>
+    <% @results.each_with_index do |row, row_index| %>
       <tr>
-        <% row.each do |value| %>
+        <% row[0..-2].each do |value| %>
           <td>
             <%= value %>
           </td>
@@ -61,16 +58,42 @@
         <td>
           <% total = row.last %>
           <%= total %>
+        </td>
 
-          <% prev_period_row = @prev_period_results.detect{|prev_period_row| row[0..-2] == prev_period_row[0..-2] } %>
-          <% if prev_period_row %>
-            <% prev_period_total = prev_period_row.last %>
-            <% diff = total - prev_period_total %>
+        <td>
+          <% if @prev_period_results.nil? %>
+            <%
+              diff_params = {
+                format: :json,
+                type: params[:type],
+                start_date: @start_date,
+                end_date: @end_date,
+                conditions: {},
+              }
 
-            <% if diff >= 0 %>
-              (+<%= diff %>)
-            <% else %>
-              (<%= diff %>)
+              data_columns.each_with_index do |col, col_index|
+                diff_params[:conditions][col] = row[col_index]
+              end
+
+              placeholder_id = "diff-placeholder-#{row_index}"
+            %>
+
+            <button type="button" class="load-difference is-link" data-url="<%= difference_tracked_requests_path(diff_params) %>" data-placeholder-id="<%= placeholder_id %>">Load Difference</button>
+
+            <div id="<%= placeholder_id %>"></div>
+          <% else %>
+            <% prev_period_row_index = @prev_period_results.index{|prev_period_row| row[0..-2] == prev_period_row[0..-2] } %>
+            <% if prev_period_row_index %>
+              <% prev_period_row = @prev_period_results.delete_at(prev_period_row_index) %>
+
+              <% prev_period_total = prev_period_row.last %>
+              <% diff = total - prev_period_total %>
+
+              <% if diff >= 0 %>
+                +<%= diff %>
+              <% else %>
+                <%= diff %>
+              <% end %>
             <% end %>
           <% end %>
         </td>
@@ -80,22 +103,61 @@
 </table>
 
 <div style="text-align: center;">
-<% if params[:page].present? && params[:page].to_i > 1 %>
-  <%= link_to "Prev", url_for(params.to_unsafe_h.merge(page: pagination_page_number-1)) %>
-  |
-<% end %>
+  <% if params[:page].present? && params[:page].to_i > 1 %>
+    <%= link_to "Prev", url_for(params.to_unsafe_h.merge(page: pagination_page_number-1)) %>
+    |
+  <% end %>
 
-<%= link_to "Next", url_for(params.to_unsafe_h.merge(page: pagination_page_number+1)) %>
+  <% if @results.size >= RailsLocalAnalytics::DashboardController::PER_PAGE_LIMIT %>
+    <%= link_to "Next", url_for(params.to_unsafe_h.merge(page: pagination_page_number+1)) %>
+  <% end %>
 </div>
 
 <script>
-  $(function(){
-    $("table.table-sortable").tablesorter();
+  document.addEventListener("DOMContentLoaded", function(){
+    var form = document.querySelector("form#search-form")
 
-    var form = $("form#search-form");
+    document.querySelectorAll("form#search-form select, form#search-form input").forEach(function(el){
+      el.addEventListener("change", function(){
+        form.submit();
+      });
+    });
 
-    form.on("change", ":input", function(){
-      form.submit();
+    document.querySelectorAll("button.load-difference").forEach(function(el){
+      el.addEventListener("click", async function(){
+        el.disabled = true;
+
+        var csrf_token = document.querySelector('meta[name="csrf-token"]').content;
+
+        var request = new Request(
+          el.getAttribute("data-url"),
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Accept: "application/json",
+              "X-CSRF-Token": csrf_token,
+            },
+          },
+        );
+
+        var response = await fetch(request)
+          .then(function(response){
+            response.json().then(function(parsed_response){
+              el.style.display = "none";
+
+              var placeholderEl = document.querySelector("#" + el.getAttribute("data-placeholder-id"));
+
+              if(parsed_response.difference >= 1){
+                placeholderEl.innerHTML = "+" + parsed_response.difference;
+              }else{
+                placeholderEl.innerHTML = "" + parsed_response.difference;
+              }
+            });
+
+          });
+
+      });
     });
   });
 </script>
