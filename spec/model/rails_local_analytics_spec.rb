@@ -74,10 +74,10 @@ RSpec.describe RailsLocalAnalytics, type: :model do
           http_accept_language: "some-http-accept-language",
         },
         custom_attributes: {
-          TrackedRequestsByDaySite => {
+          site: {
             platform: "foo",
           },
-          TrackedRequestsByDayPage => {
+          page: {
             referrer_hostname: "bar",
           },
         },

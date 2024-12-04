@@ -74,4 +74,51 @@ RSpec.describe RailsLocalAnalytics::DashboardController, type: :request do
       expect(response.status).to eq(200)
     end
   end
+
+  context "difference" do
+    it "raises 404 for non-json requests" do
+      expect {
+        get rails_local_analytics.difference_tracked_requests_path(format: :html, type: :site, start_date: Date.today, end_date: Date.today, conditions: {url_hostname: "foo"})
+      }.to raise_error(ActionController::RoutingError)
+    end
+
+    it "works when date range is a single day" do
+      [Date.today, (Date.today - 1.day)].each do |day|
+        TrackedRequestsByDaySite.create!(
+          day: day,
+          url_hostname: "foo",
+          total: (day == Date.today ? 5 : 1)
+        )
+
+        TrackedRequestsByDaySite.create!(
+          day: day,
+          url_hostname: "bar",
+        )
+      end
+
+      get rails_local_analytics.difference_tracked_requests_path(format: :json, type: :site, start_date: Date.today, end_date: Date.today, conditions: {url_hostname: "foo"})
+      expect(response.status).to eq(200)
+      expect(response.parsed_body).to eq({"difference" => 4})
+    end
+
+    it "works when date range spans multiple days" do
+      [Date.today, (Date.today - 1.day), 2.days.ago.to_date, 3.days.ago.to_date].each do |day|
+        TrackedRequestsByDaySite.create!(
+          day: day,
+          url_hostname: "foo",
+          total: (day == Date.today ? 20 : 5)
+        )
+
+        TrackedRequestsByDaySite.create!(
+          day: day,
+          url_hostname: "bar",
+          total: 1,
+        )
+      end
+
+      get rails_local_analytics.difference_tracked_requests_path(format: :json, type: :site, start_date: (Date.today - 1.day), end_date: Date.today, conditions: {url_hostname: "foo"})
+      expect(response.status).to eq(200)
+      expect(response.parsed_body).to eq({"difference" => 15})
+    end
+  end
 end

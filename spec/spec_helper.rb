@@ -26,11 +26,9 @@ RSpec.configure do |config|
   Kernel.srand(config.seed)
 
   config.before(:suite) do
-    ### PERFORMS CLEAN IMMEDIATELY
-    DatabaseCleaner.clean_with(:truncation)
+    DatabaseCleaner.clean_with(:truncation) # perform initial cleaning before starting
 
-    #DatabaseCleaner.strategy = :truncation, { except: [], pre_count: true }
-    DatabaseCleaner.strategy = :transaction
+    DatabaseCleaner.strategy = :truncation
   end
 
   config.around(:each) do |example|
