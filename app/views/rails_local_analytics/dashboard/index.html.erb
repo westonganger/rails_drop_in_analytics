@@ -57,7 +57,7 @@
 
         <td>
           <% total = row.last %>
-          <%= total %>
+          <%= total.to_fs(:delimited) %>
         </td>
 
         <td>
@@ -83,16 +83,19 @@
             <div id="<%= placeholder_id %>"></div>
           <% else %>
             <% prev_period_row_index = @prev_period_results.index{|prev_period_row| row[0..-2] == prev_period_row[0..-2] } %>
-            <% if prev_period_row_index %>
+
+            <% if prev_period_row_index.nil? %>
+              +<%= total.to_fs(:delimited) %>
+            <% else %>
               <% prev_period_row = @prev_period_results.delete_at(prev_period_row_index) %>
 
               <% prev_period_total = prev_period_row.last %>
               <% diff = total - prev_period_total %>
 
               <% if diff >= 0 %>
-                +<%= diff %>
+                +<%= diff.to_fs(:delimited) %>
               <% else %>
-                <%= diff %>
+                <%= diff.to_fs(:delimited) %>
               <% end %>
             <% end %>
           <% end %>
@@ -149,9 +152,9 @@
               var placeholderEl = document.querySelector("#" + el.getAttribute("data-placeholder-id"));
 
               if(parsed_response.difference >= 1){
-                placeholderEl.innerHTML = "+" + parsed_response.difference;
+                placeholderEl.innerHTML = "+" + parsed_response.difference.toLocaleString();
               }else{
-                placeholderEl.innerHTML = "" + parsed_response.difference;
+                placeholderEl.innerHTML = "" + parsed_response.difference.toLocaleString();
               }
             });
 

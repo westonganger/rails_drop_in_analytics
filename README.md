@@ -27,6 +27,8 @@ It is fully customizable to store more details if desired.
 
 ![Screenshot 3](/screenshot_3.png)
 
+![Screenshot 4](/screenshot_4.png)
+
 ## Installation
 
 ```ruby
