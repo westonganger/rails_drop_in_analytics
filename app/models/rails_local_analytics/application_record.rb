@@ -26,9 +26,5 @@ module RailsLocalAnalytics
       column_names - ["id", "created_at", "updated_at", "total", "day"]
     end
 
-    def matches?(other_record)
-      day == other_record.day && self.class.display_columns.all?{|col_name| self.send(col_name) == other_record.send(col_name) }
-    end
-
   end
 end

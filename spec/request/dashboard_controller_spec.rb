@@ -67,14 +67,9 @@ RSpec.describe RailsLocalAnalytics::DashboardController, type: :request do
     end
 
     it "renders with group_by param" do
-      get rails_local_analytics.tracked_requests_path(type: :site, group_by: "All")
-
-      expect(response.status).to eq(200)
       get rails_local_analytics.tracked_requests_path(type: :site, group_by: "platform")
       expect(response.status).to eq(200)
 
-      get rails_local_analytics.tracked_requests_path(type: :page, group_by: "All")
-      expect(response.status).to eq(200)
       get rails_local_analytics.tracked_requests_path(type: :page, group_by: "referrer_path")
       expect(response.status).to eq(200)
     end
