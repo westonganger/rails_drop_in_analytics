@@ -34,12 +34,12 @@ module RailsLocalAnalytics
 
       field = "url_hostname"
       if !skip_field?(field, attrs, model)
-        attrs[field] = request_hash.fetch("host").downcase
+        attrs[field] = request_hash.fetch("host")
       end
 
       field = "url_path"
       if !skip_field?(field, attrs, model)
-        attrs[field] = request_hash.fetch("path").downcase
+        attrs[field] = request_hash.fetch("path")
       end
 
       if request_hash.fetch("referrer").present?
@@ -76,8 +76,6 @@ module RailsLocalAnalytics
     end
 
     def split_referrer(referrer)
-      referrer = referrer.downcase
-
       uri = URI(referrer)
 
       if uri.host.present?
