@@ -2,7 +2,14 @@ class ApplicationController < ActionController::Base
   after_action :record_page_view
 
   def example_action
-    render html: "Hello World!"
+    html = <<~HTML
+      Hello World!
+      <br>
+      <br>
+      <a href="#{rails_local_analytics.root_path}">Go to Analytics Dashboard</a>
+    HTML
+
+    render(html: html.html_safe)
   end
 
   private

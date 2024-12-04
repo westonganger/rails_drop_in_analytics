@@ -1,6 +1,13 @@
 require 'spec_helper'
 
 RSpec.describe RailsLocalAnalytics::DashboardController, type: :request do
+  context "root" do
+    it "redirects" do
+      get rails_local_analytics.root_path
+      expect(response).to redirect_to(rails_local_analytics.tracked_requests_path(type: :page))
+    end
+  end
+
   context "index" do
     before(:all) do
       2.times.each do
@@ -17,57 +24,58 @@ RSpec.describe RailsLocalAnalytics::DashboardController, type: :request do
     end
 
     it "renders" do
-      get rails_local_analytics.root_path
-      expect(response.status).to eq(200)
+      get rails_local_analytics.tracked_requests_path(type: :foo)
+      expect(response.status).to eq(404)
     end
 
     it "renders with type param" do
-      get rails_local_analytics.root_path, params: {type: "Site"}
+      get rails_local_analytics.tracked_requests_path(type: :site)
       expect(response.status).to eq(200)
 
-      get rails_local_analytics.root_path, params: {type: "Page"}
+      get rails_local_analytics.tracked_requests_path(type: :page)
       expect(response.status).to eq(200)
     end
 
     it "renders with start_date param" do
-      get rails_local_analytics.root_path, params: {type: "Site", start_date: 3.days.ago.to_date}
+      get rails_local_analytics.tracked_requests_path(type: :site, start_date: 3.days.ago.to_date)
       expect(response.status).to eq(200)
 
-      get rails_local_analytics.root_path, params: {type: "Page", start_date: 3.days.ago.to_date}
+      get rails_local_analytics.tracked_requests_path(type: :page, start_date: 3.days.ago.to_date)
       expect(response.status).to eq(200)
     end
 
     it "renders with end_date param" do
-      get rails_local_analytics.root_path, params: {type: "Site", end_date: 3.days.ago.to_date}
+      get rails_local_analytics.tracked_requests_path(type: :site, end_date: 3.days.ago.to_date)
       expect(response.status).to eq(200)
 
-      get rails_local_analytics.root_path, params: {type: "Page", end_date: 3.days.ago.to_date}
+      get rails_local_analytics.tracked_requests_path(type: :page, end_date: 3.days.ago.to_date)
       expect(response.status).to eq(200)
     end
 
     it "renders with search param" do
-      get rails_local_analytics.root_path, params: {type: "Site", search: "foo"}
+      get rails_local_analytics.tracked_requests_path(type: :site, search: "foo")
       expect(response.status).to eq(200)
 
-      get rails_local_analytics.root_path, params: {type: "Site", search: "foo bar"}
+      get rails_local_analytics.tracked_requests_path(type: :site, search: "foo bar")
       expect(response.status).to eq(200)
 
-      get rails_local_analytics.root_path, params: {type: "Page", search: "foo"}
+      get rails_local_analytics.tracked_requests_path(type: :page, search: "foo")
       expect(response.status).to eq(200)
 
-      get rails_local_analytics.root_path, params: {type: "Page", search: "foo bar"}
+      get rails_local_analytics.tracked_requests_path(type: :page, search: "foo bar")
       expect(response.status).to eq(200)
     end
 
     it "renders with group_by param" do
-      get rails_local_analytics.root_path, params: {type: "Site", group_by: "All"}
+      get rails_local_analytics.tracked_requests_path(type: :site, group_by: "All")
+
       expect(response.status).to eq(200)
-      get rails_local_analytics.root_path, params: {type: "Site", group_by: "platform"}
+      get rails_local_analytics.tracked_requests_path(type: :site, group_by: "platform")
       expect(response.status).to eq(200)
 
-      get rails_local_analytics.root_path, params: {type: "Page", group_by: "All"}
+      get rails_local_analytics.tracked_requests_path(type: :page, group_by: "All")
       expect(response.status).to eq(200)
-      get rails_local_analytics.root_path, params: {type: "Page", group_by: "referrer_path"}
+      get rails_local_analytics.tracked_requests_path(type: :page, group_by: "referrer_path")
       expect(response.status).to eq(200)
     end
   end

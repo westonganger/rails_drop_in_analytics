@@ -2,6 +2,7 @@
 
 ### Unreleased
 - [View Diff](https://github.com/westonganger/rails_local_analytics/compare/v0.1.0...master)
+- [#7](https://github.com/westonganger/rails_local_analytics/pull/7) - Create separate tabs for page/site analytics, improve routes, fix multi_search, add more time quicklinks
 - [#6](https://github.com/westonganger/rails_local_analytics/pull/6) - Inline javascript file
 - [#5](https://github.com/westonganger/rails_local_analytics/pull/5) - Show page analytics on dashboard by default instead of site analytics
 - [#4](https://github.com/westonganger/rails_local_analytics/pull/4) - Make search form auto-submit upon changing any fields

@@ -2,15 +2,16 @@ module RailsLocalAnalytics
   class DashboardController < ApplicationController
 
     def index
-      params[:type] ||= "Page"
+      params[:type] ||= "page"
 
       case params[:type]
-      when "Site"
+      when "site"
         @klass = TrackedRequestsByDaySite
-      when "Page"
+      when "page"
         @klass = TrackedRequestsByDayPage
       else
-        raise ArgumentError
+        head 404
+        return
       end
 
       if params[:group_by].present? && !@klass.display_columns.include?(params[:group_by])

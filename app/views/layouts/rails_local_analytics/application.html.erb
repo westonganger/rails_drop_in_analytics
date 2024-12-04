@@ -22,6 +22,16 @@
         <div class="navbar-header">
           <%= link_to title , root_path, class: "navbar-brand" %>
         </h1>
+
+        <ul class="nav navbar-nav navbar-right">
+          <li class="<%= 'active' if params[:type] == "page" %>">
+            <%= link_to "Requests By Page", tracked_requests_path(type: "page") %>
+          </li>
+
+          <li class="<%= 'active' if params[:type] == "site" %>">
+            <%= link_to "Requests By Site", tracked_requests_path(type: "site") %>
+          </li>
+        </ul>
       </div>
     </nav>
 
