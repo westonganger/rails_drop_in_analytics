@@ -84,6 +84,8 @@
 
 <script>
   $(function(){
+    $("table.table-sortable").tablesorter();
+
     var siteGroupByOptions = "<%= j site_group_by_options %>";
     var pageGroupByOptions = "<%= j page_group_by_options %>";
 
