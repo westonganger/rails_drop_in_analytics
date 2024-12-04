@@ -3,7 +3,7 @@
 
 <%= form_tag url_for(params.except(:start_date, :to).to_unsafe_hash), method: "get", class: "well well-sm", id: "search-form" do %>
   <div>
-    <label style="margin-right: 10px;">Type: <%= select_tag :type, options_for_select(["Site", "Page"], params[:type]) %></label>
+    <label style="margin-right: 10px;">Type: <%= select_tag :type, options_for_select(["Page", "Site"], params[:type]) %></label>
 
     <label style="margin-right: 10px;">Group By: <%= select_tag :group_by, options_for_select([["All", "All"]] + @klass.display_columns.map{|x| [x.titleize.sub("Url ", "URL "), x]} , params[:group_by]) %></label>
     <label style="margin-right: 10px;">Search: <%= text_field_tag :search, params[:search] %></label>
