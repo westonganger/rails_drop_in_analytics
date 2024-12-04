@@ -1,6 +1,6 @@
 <%= form_tag url_for(params.except(:start_date, :to).to_unsafe_hash), method: "get", class: "well well-sm", id: "search-form" do %>
   <div>
-    <label style="margin-right: 10px;">Group By: <%= select_tag :group_by, options_for_select([["All", "All"]] + @klass.display_columns.map{|x| [x.titleize.sub("Url ", "URL "), x]} , params[:group_by]) %></label>
+    <label style="margin-right: 10px;">Group By: <%= select_tag :group_by, options_for_select([["All", nil]] + @klass.display_columns.map{|x| [x.titleize.sub("Url ", "URL "), x]} , params[:group_by]) %></label>
 
     <label style="margin-right: 10px;">From: <%= date_field_tag :start_date, @start_date %></label>
     <label style="margin-right: 10px;">To: <%= date_field_tag :end_date, @end_date %></label>
@@ -29,18 +29,18 @@
 
 <table class="table table-striped table-condensed table-sortable">
   <thead>
-    <% if params[:group_by] == "All" %>
+    <% if params[:group_by].present? %>
+      <th>
+        <%= params[:group_by].titleize.sub("Url ", "URL ") %>
+        <span title="Sort column">&varr;</span>
+      </th>
+    <% else %>
       <% @klass.display_columns.each do |col_name| %>
         <th>
           <%= col_name.titleize.sub("Url ", "URL ") %>
           <span title="Sort column">&varr;</span>
         </th>
       <% end %>
-    <% else %>
-      <td>
-        <%= params[:group_by].titleize.sub("Url ", "URL ") %>
-        <span title="Sort column">&varr;</span>
-      </td>
     <% end %>
 
     <th>
@@ -50,39 +50,43 @@
   </thead>
 
   <tbody>
-    <% @tracked_requests.group_by{|x| params[:group_by] != "All" ? x.send(params[:group_by]) : @klass.display_columns.map{|col| x.send(col)}}.each do |_grouping, records| %>
-      <% first_record = records.first %>
-
+    <% @results.each do |row| %>
       <tr>
-        <% if params[:group_by] == "All" %>
-          <% @klass.display_columns.each do |col_name| %>
-            <td>
-              <%= first_record.send(col_name) %>
-            </td>
-          <% end %>
-        <% else %>
+        <% row.each do |value| %>
           <td>
-            <%= first_record.send(params[:group_by]) %>
+            <%= value %>
           </td>
         <% end %>
 
         <td>
-          <% total = records.sum(&:total) %>
+          <% total = row.last %>
           <%= total %>
 
-          <% _grouping, prev_period_records = @prev_period_tracked_requests.select{|x| first_record.matches?(x) }.group_by{|x| params[:group_by] != "All" ? x.send(params[:group_by]) : @klass.display_columns.map{|col| x.send(col)}}.first %>
-          <% diff = total - prev_period_records.sum(&:total) %>
+          <% prev_period_row = @prev_period_results.detect{|prev_period_row| row[0..-2] == prev_period_row[0..-2] } %>
+          <% if prev_period_row %>
+            <% prev_period_total = prev_period_row.last %>
+            <% diff = total - prev_period_total %>
 
-          <% if diff >= 0 %>
-            (+<%= diff %>)
-          <% else %>
-            (<%= diff %>)
+            <% if diff >= 0 %>
+              (+<%= diff %>)
+            <% else %>
+              (<%= diff %>)
+            <% end %>
           <% end %>
         </td>
       </tr>
     <% end %>
   </tbody>
 </table>
+
+<div style="text-align: center;">
+<% if params[:page].present? && params[:page].to_i > 1 %>
+  <%= link_to "Prev", url_for(params.to_unsafe_h.merge(page: pagination_page_number-1)) %>
+  |
+<% end %>
+
+<%= link_to "Next", url_for(params.to_unsafe_h.merge(page: pagination_page_number+1)) %>
+</div>
 
 <script>
   $(function(){
