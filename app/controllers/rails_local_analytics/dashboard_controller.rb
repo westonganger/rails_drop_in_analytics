@@ -2,7 +2,7 @@ module RailsLocalAnalytics
   class DashboardController < ApplicationController
 
     def index
-      params[:type] ||= "Site"
+      params[:type] ||= "Page"
 
       case params[:type]
       when "Site"
