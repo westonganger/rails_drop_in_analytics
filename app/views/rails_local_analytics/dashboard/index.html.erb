@@ -1,7 +1,7 @@
 <% page_group_by_options = options_for_select([["All", "All"]] + TrackedRequestsByDayPage.display_columns.map{|x| [x.titleize.sub("Url ", "URL "), x]}) %>
 <% site_group_by_options = options_for_select([["All", "All"]] + TrackedRequestsByDaySite.display_columns.map{|x| [x.titleize.sub("Url ", "URL "), x]}) %>
 
-<%= form_tag url_for(params.except(:start_date, :to).to_unsafe_hash), method: "get", class: "well well-sm" do %>
+<%= form_tag url_for(params.except(:start_date, :to).to_unsafe_hash), method: "get", class: "well well-sm", id: "search-form" do %>
   <div>
     <label style="margin-right: 10px;">Type: <%= select_tag :type, options_for_select(["Site", "Page"], params[:type]) %></label>
 
@@ -10,7 +10,6 @@
 
     <label style="margin-right: 10px;">From: <%= date_field_tag :start_date, @start_date %></label>
     <label style="margin-right: 10px;">To: <%= date_field_tag :end_date, @end_date %></label>
-    <button type="submit">Filter</button>
   </div>
 
   <div>
@@ -96,6 +95,12 @@
       }else{
         group_by_select.html(pageGroupByOptions);
       }
+    });
+
+    var form = $("form#search-form");
+
+    form.on("change", ":input", function(){
+      form.submit();
     });
   });
 </script>
