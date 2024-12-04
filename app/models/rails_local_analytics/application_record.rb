@@ -15,7 +15,7 @@ module RailsLocalAnalytics
             sql_conditions << "(#{col} #{like} :search)"
           end
 
-          relation = self.where(sql_conditions.join(" AND "), search: "%#{sanitize_sql_like(str)}%")
+          relation = relation.where(sql_conditions.join(" OR "), search: "%#{sanitize_sql_like(str)}%")
         end
 
         next relation
