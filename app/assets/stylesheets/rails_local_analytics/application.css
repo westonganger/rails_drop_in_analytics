@@ -2,6 +2,10 @@ body{
   padding-bottom: 20px;
 }
 
+table th, table td{
+  overflow-wrap: anywhere;
+}
+
 input, select {
   border-radius: 5px;
   border: 1px solid #333;
