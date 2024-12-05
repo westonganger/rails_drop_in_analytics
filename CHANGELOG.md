@@ -2,6 +2,7 @@
 
 ### Unreleased
 - [View Diff](https://github.com/westonganger/rails_local_analytics/compare/v0.2.0...master)
+- [#11](https://github.com/westonganger/rails_local_analytics/pull/11) - Add ability to filter on specific field/value combos
 - [#10](https://github.com/westonganger/rails_local_analytics/pull/10) - Dont use `Integer#to_fs` as its not available in Rails 6.x
 
 ### v0.2.0 - Dec 4 2024

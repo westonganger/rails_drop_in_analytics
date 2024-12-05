@@ -66,12 +66,55 @@ RSpec.describe RailsLocalAnalytics::DashboardController, type: :request do
       expect(response.status).to eq(200)
     end
 
-    it "renders with group_by param" do
-      get rails_local_analytics.tracked_requests_path(type: :site, group_by: "platform")
-      expect(response.status).to eq(200)
+    context "params[:group_by]" do
+      it "raises error when field name is invalid" do
+        expect {
+          get rails_local_analytics.tracked_requests_path(type: :site, filter: "id==some-value")
+        }.to raise_error(ArgumentError)
+      end
 
-      get rails_local_analytics.tracked_requests_path(type: :page, group_by: "referrer_path")
-      expect(response.status).to eq(200)
+      it "renders" do
+        get rails_local_analytics.tracked_requests_path(type: :site, group_by: "platform")
+        expect(response.status).to eq(200)
+
+        get rails_local_analytics.tracked_requests_path(type: :page, group_by: "referrer_path")
+        expect(response.status).to eq(200)
+      end
+    end
+
+    context "params[:filter]" do
+      it "raises error when field name is invalid" do
+        expect {
+          get rails_local_analytics.tracked_requests_path(type: :site, filter: "id==some-value")
+        }.to raise_error(ArgumentError)
+      end
+
+      it "filters on specific field/value combos" do
+        klass = TrackedRequestsByDaySite
+
+        col = klass.display_columns.first
+
+        klass.create!(
+          day: Date.today,
+          col => "some-value",
+          platform: "foo",
+        )
+
+        klass.create!(
+          day: Date.today,
+          col => "foo",
+        )
+
+        klass.create!(
+          day: Date.today,
+          col => "some-value",
+          platform: "bar",
+        )
+
+        get rails_local_analytics.tracked_requests_path(type: :site, filter: "#{col}==some-value")
+        expect(response.status).to eq(200)
+        expect(assigns(:results).map(&:first)).to eq(["some-value", "some-value"])
+      end
     end
   end
 

@@ -18,7 +18,7 @@ module RailsLocalAnalytics
       end
 
       if params[:group_by].present? && !@klass.display_columns.include?(params[:group_by])
-        params[:group_by] = nil
+        raise ArgumentError
       end
 
       if params[:start_date].present?
@@ -100,6 +100,16 @@ module RailsLocalAnalytics
         tracked_requests = tracked_requests
           .limit(PER_PAGE_LIMIT)
           .offset(PER_PAGE_LIMIT * (pagination_page_number-1))
+
+        if params[:filter].present?
+          col, val = params[:filter].split("==")
+
+          if @klass.display_columns.include?(col)
+            tracked_requests = tracked_requests.where(col => val)
+          else
+            raise ArgumentError
+          end
+        end
       end
 
       if where_conditions
