@@ -41,84 +41,82 @@
 
 <h2>Requests by <%= params[:type].titleize %></h2>
 
-<div class="table-responsive">
-  <table class="table table-striped table-condensed">
-    <thead>
-      <% data_columns.each do |header| %>
-        <th>
-          <%= header.titleize.sub("Url ", "URL ") %>
-        </th>
-      <% end %>
-
+<table class="table table-striped table-condensed">
+  <thead>
+    <% data_columns.each do |header| %>
       <th>
-        Total
+        <%= header.titleize.sub("Url ", "URL ") %>
       </th>
+    <% end %>
 
-      <th>
-        Prev Period Difference
-      </th>
-    </thead>
+    <th>
+      Total
+    </th>
 
-    <tbody>
-      <% @results.each_with_index do |row, row_index| %>
-        <tr>
-          <% row[0..-2].each_with_index do |value, col_index| %>
-            <td>
-              <% filter_param = "#{data_columns[col_index]}==#{value}" %>
-              <%= link_to value, url_for(params.to_unsafe_h.merge(filter: filter_param)), title: "Filter" %>
-            </td>
-          <% end %>
+    <th>
+      Prev Period Difference
+    </th>
+  </thead>
 
+  <tbody>
+    <% @results.each_with_index do |row, row_index| %>
+      <tr>
+        <% row[0..-2].each_with_index do |value, col_index| %>
           <td>
-            <% total = row.last %>
-            <%= number_with_delimiter(total) %>
+            <% filter_param = "#{data_columns[col_index]}==#{value}" %>
+            <%= link_to value, url_for(params.to_unsafe_h.merge(filter: filter_param)), title: "Filter" %>
           </td>
+        <% end %>
 
-          <td>
-            <% if @prev_period_results.nil? %>
-              <%
-                diff_params = {
-                  format: :json,
-                  type: params[:type],
-                  start_date: @start_date,
-                  end_date: @end_date,
-                  conditions: {},
-                }
+        <td>
+          <% total = row.last %>
+          <%= number_with_delimiter(total) %>
+        </td>
 
-                data_columns.each_with_index do |col, col_index|
-                  diff_params[:conditions][col] = row[col_index]
-                end
+        <td>
+          <% if @prev_period_results.nil? %>
+            <%
+              diff_params = {
+                format: :json,
+                type: params[:type],
+                start_date: @start_date,
+                end_date: @end_date,
+                conditions: {},
+              }
 
-                placeholder_id = "diff-placeholder-#{row_index}"
-              %>
+              data_columns.each_with_index do |col, col_index|
+                diff_params[:conditions][col] = row[col_index]
+              end
 
-              <button type="button" class="load-difference is-link" data-url="<%= difference_tracked_requests_path(diff_params) %>" data-placeholder-id="<%= placeholder_id %>">Load Difference</button>
+              placeholder_id = "diff-placeholder-#{row_index}"
+            %>
 
-              <div id="<%= placeholder_id %>"></div>
+            <button type="button" class="load-difference is-link" data-url="<%= difference_tracked_requests_path(diff_params) %>" data-placeholder-id="<%= placeholder_id %>">Load Difference</button>
+
+            <div id="<%= placeholder_id %>"></div>
+          <% else %>
+            <% prev_period_row_index = @prev_period_results.index{|prev_period_row| row[0..-2] == prev_period_row[0..-2] } %>
+
+            <% if prev_period_row_index.nil? %>
+              +<%= number_with_delimiter(total) %>
             <% else %>
-              <% prev_period_row_index = @prev_period_results.index{|prev_period_row| row[0..-2] == prev_period_row[0..-2] } %>
+              <% prev_period_row = @prev_period_results.delete_at(prev_period_row_index) %>
 
-              <% if prev_period_row_index.nil? %>
-                +<%= number_with_delimiter(total) %>
+              <% prev_period_total = prev_period_row.last %>
+              <% diff = total - prev_period_total %>
+
+              <% if diff >= 0 %>
+                +<%= number_with_delimiter(diff) %>
               <% else %>
-                <% prev_period_row = @prev_period_results.delete_at(prev_period_row_index) %>
-
-                <% prev_period_total = prev_period_row.last %>
-                <% diff = total - prev_period_total %>
-
-                <% if diff >= 0 %>
-                  +<%= number_with_delimiter(diff) %>
-                <% else %>
-                  <%= number_with_delimiter(diff) %>
-                <% end %>
+                <%= number_with_delimiter(diff) %>
               <% end %>
             <% end %>
-          </td>
-        </tr>
-      <% end %>
-    </tbody>
-  </table>
-</div>
+          <% end %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
 
 <div style="text-align: center;">
   <% if params[:page].present? && params[:page].to_i > 1 %>
