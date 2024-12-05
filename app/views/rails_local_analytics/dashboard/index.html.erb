@@ -64,7 +64,7 @@
         <% row[0..-2].each_with_index do |value, col_index| %>
           <td>
             <% filter_param = "#{data_columns[col_index]}==#{value}" %>
-            <%= link_to value, url_for(params.to_unsafe_h.merge(filter: filter_param)), title: "Filter" %>
+            <%= link_to (value || ""), url_for(params.to_unsafe_h.merge(filter: filter_param)), title: "Filter" %>
           </td>
         <% end %>
 
