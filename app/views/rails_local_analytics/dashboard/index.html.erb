@@ -23,19 +23,20 @@
   <% end %>
 
   <div>
-    <%= link_to "Today", url_for(params.merge(start_date: Date.today, end_date: Date.today).to_unsafe_hash) %>
+    <%= link_to "Today", url_for(params.merge(start_date: Date.today, end_date: Date.today).to_unsafe_hash), style: ("font-weight: bold;" if @start_date == Date.today && @end_date == Date.today) %>
     |
-    <%= link_to "Yesterday", url_for(params.merge(start_date: (Date.today - 1.day), end_date: (Date.today - 1.day)).to_unsafe_hash) %>
+    <% yesterday = Date.today - 1.day %>
+    <%= link_to "Yesterday", url_for(params.merge(start_date: yesterday, end_date: yesterday).to_unsafe_hash), style: ("font-weight: bold;" if @start_date == yesterday && @end_date == yesterday) %>
     |
-    <%= link_to "Last 7 days", url_for(params.merge(start_date: 7.days.ago.to_date, end_date: Date.today).to_unsafe_hash) %>
+    <%= link_to "Last 7 days", url_for(params.merge(start_date: 7.days.ago.to_date, end_date: Date.today).to_unsafe_hash), style: ("font-weight: bold;" if @start_date == 7.days.ago.to_date && @end_date == Date.today) %>
     |
-    <%= link_to "Last 30 days", url_for(params.merge(start_date: 30.days.ago.to_date, end_date: Date.today).to_unsafe_hash) %>
+    <%= link_to "Last 30 days", url_for(params.merge(start_date: 30.days.ago.to_date, end_date: Date.today).to_unsafe_hash), style: ("font-weight: bold;" if @start_date == 30.days.ago.to_date && @end_date == Date.today) %>
     |
-    <%= link_to "Last 3 Months", url_for(params.merge(start_date: 3.months.ago.to_date, end_date: Date.today).to_unsafe_hash) %>
+    <%= link_to "Last 3 Months", url_for(params.merge(start_date: 3.months.ago.to_date, end_date: Date.today).to_unsafe_hash), style: ("font-weight: bold;" if @start_date == 3.months.ago.to_date && @end_date == Date.today) %>
     |
-    <%= link_to "Last 6 Months", url_for(params.merge(start_date: 6.months.ago.to_date, end_date: Date.today).to_unsafe_hash) %>
+    <%= link_to "Last 6 Months", url_for(params.merge(start_date: 6.months.ago.to_date, end_date: Date.today).to_unsafe_hash), style: ("font-weight: bold;" if @start_date == 6.months.ago.to_date && @end_date == Date.today) %>
     |
-    <%= link_to "Last Year", url_for(params.merge(start_date: 1.year.ago.to_date, end_date: Date.today).to_unsafe_hash) %>
+    <%= link_to "Last Year", url_for(params.merge(start_date: 1.year.ago.to_date, end_date: Date.today).to_unsafe_hash), style: ("font-weight: bold;" if @start_date == 1.year.ago.to_date && @end_date == Date.today) %>
   </div>
 </div>
 
