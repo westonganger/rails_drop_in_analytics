@@ -138,6 +138,9 @@ Some examples of additional things you may want to track:
   * You may not need to store this in a new column, one example pattern could be to store this data in the existing `platform` database field
 - Country detection
   * Country detection is difficult. As such we dont try to include it by default.
+  * Consider using language detection instead
+- Language detection
+  * You can gather the language from the `request.env["HTTP_ACCEPT_LANGUAGE"]` or `browser.accept_language.first.full`
 - Users or organizations
   * You may want to track your users or another model which is a core tenant to your particular application
 
