@@ -22,6 +22,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency "browser"
 
   spec.add_development_dependency "rspec-rails"
+  spec.add_development_dependency "rspec-html-matchers"
   spec.add_development_dependency "database_cleaner"
   spec.add_development_dependency "rails-controller-testing"
 end

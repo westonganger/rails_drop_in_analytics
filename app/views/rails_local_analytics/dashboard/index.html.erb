@@ -1,9 +1,41 @@
-<% data_columns = params[:group_by].present? ? [params[:group_by]] : @klass.display_columns %>
+<%
+  data_columns = params[:group_by].present? ? [params[:group_by]] : display_columns
+
+  if data_columns.first == "url_hostname_and_path"
+    data_columns = ["URL Hostname", "URL Path"]
+  elsif data_columns.first == "referrer_hostname_and_path"
+    data_columns = ["Referrer Hostname", "Referrer Path"]
+  end
+%>
+
+<%
+  group_by_opts = [
+    ["All", nil],
+  ]
+
+  group_by_opts += display_columns.map{|x| [x.titleize.sub("Url ", "URL "), x] }
+
+  if display_columns.include?("url_hostname") && display_columns.include?("url_path")
+    index = group_by_opts.index(["URL Path", "url_path"])
+    group_by_opts.insert(
+      index,
+      ["URL Hostname and Path", "url_hostname_and_path"],
+    )
+  end
+
+  if display_columns.include?("referrer_hostname") && display_columns.include?("referrer_path")
+    index = group_by_opts.index(["Referrer Path", "referrer_path"])
+    group_by_opts.insert(
+      index,
+      ["Referrer Hostname and Path", "referrer_hostname_and_path"],
+    )
+  end
+%>
 
 <div class="well well-sm">
   <%= form_tag url_for(params.except(:start_date, :to).to_unsafe_hash), method: "get", id: "search-form" do %>
     <div>
-      <label style="margin-right: 10px;">Group By: <%= select_tag :group_by, options_for_select([["All", nil]] + @klass.display_columns.map{|x| [x.titleize.sub("Url ", "URL "), x]} , params[:group_by]) %></label>
+      <label style="margin-right: 10px;">Group By: <%= select_tag :group_by, options_for_select(group_by_opts, params[:group_by]) %></label>
 
       <label style="margin-right: 10px;">From: <%= date_field_tag :start_date, @start_date %></label>
       <label style="margin-right: 10px;">To: <%= date_field_tag :end_date, @end_date %></label>

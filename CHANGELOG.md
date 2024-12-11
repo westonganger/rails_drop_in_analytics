@@ -2,7 +2,7 @@
 
 ### Unreleased
 - [View Diff](https://github.com/westonganger/rails_local_analytics/compare/v0.2.1...master)
-- Nothing yet
+- [#13](https://github.com/westonganger/rails_local_analytics/pull/13) - Add ability to group by hostname and path combined
 
 ### v0.2.1 - Dec 4 2024
 - [View Diff](https://github.com/westonganger/rails_local_analytics/compare/v0.2.0...v0.2.1)
