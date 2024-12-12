@@ -3,6 +3,7 @@ module RailsLocalAnalytics
     PER_PAGE_LIMIT = 1000
 
     helper_method :pagination_page_number
+    helper_method :display_columns
 
     def index
       params[:type] ||= "page"
@@ -15,10 +16,6 @@ module RailsLocalAnalytics
       else
         head 404
         return
-      end
-
-      if params[:group_by].present? && !@klass.display_columns.include?(params[:group_by])
-        raise ArgumentError
       end
 
       if params[:start_date].present?
@@ -63,20 +60,18 @@ module RailsLocalAnalytics
 
       prev_start_date, prev_end_date = get_prev_dates(start_date, end_date)
 
-      where_conditions = params.require(:conditions).permit(*@klass.display_columns)
+      difference_where_conditions = params.require(:conditions).permit(*display_columns)
 
       current_total = fetch_records(
         start_date,
         end_date,
-        where_conditions: where_conditions,
-        pluck_columns: ["SUM(total)"],
+        difference_where_conditions: difference_where_conditions,
       ).first
 
       prev_total = fetch_records(
         prev_start_date,
         prev_end_date,
-        where_conditions: where_conditions,
-        pluck_columns: ["SUM(total)"],
+        difference_where_conditions: difference_where_conditions,
       ).first
 
       if prev_total
@@ -90,13 +85,17 @@ module RailsLocalAnalytics
 
     private
 
-    def fetch_records(start_date, end_date, where_conditions: nil, pluck_columns: nil)
+    def fetch_records(start_date, end_date, difference_where_conditions: nil)
+      aggregate_sql_field = "SUM(total)"
+
       tracked_requests = @klass
         .where("day >= ?", start_date)
         .where("day <= ?", end_date)
-        .order(total: :desc)
+        .order("#{aggregate_sql_field} DESC")
 
-      if where_conditions.nil? && pluck_columns.nil?
+      if difference_where_conditions
+        tracked_requests = tracked_requests.where(difference_where_conditions)
+      else
         tracked_requests = tracked_requests
           .limit(PER_PAGE_LIMIT)
           .offset(PER_PAGE_LIMIT * (pagination_page_number-1))
@@ -104,7 +103,7 @@ module RailsLocalAnalytics
         if params[:filter].present?
           col, val = params[:filter].split("==")
 
-          if @klass.display_columns.include?(col)
+          if display_columns.include?(col)
             tracked_requests = tracked_requests.where(col => val)
           else
             raise ArgumentError
@@ -112,24 +111,45 @@ module RailsLocalAnalytics
         end
       end
 
-      if where_conditions
-        tracked_requests = tracked_requests.where(where_conditions)
-      end
-
       if params[:search].present?
         tracked_requests = tracked_requests.multi_search(params[:search])
       end
 
-      if params[:group_by].present?
-        group_by_columns = [params[:group_by]]
-        pluck_columns = [params[:group_by], "SUM(total)"]
+      if params[:group_by].blank?
+        group_by = display_columns.dup
+        pluck_columns = display_columns.dup
       else
-        group_by_columns = @klass.display_columns
-        pluck_columns ||= @klass.display_columns + ["SUM(total)"]
+        case params[:group_by]
+        when "url_hostname_and_path"
+          if display_columns.include?("url_hostname") && display_columns.include?("url_path")
+            group_by = ["(url_hostname + url_path)"]
+            pluck_columns = [:url_hostname, :url_path]
+          else
+            raise ArgumentError
+          end
+        when "referrer_hostname_and_path"
+          if display_columns.include?("referrer_hostname") && display_columns.include?("referrer_path")
+            group_by = ["(referrer_hostname + referrer_path)"]
+            pluck_columns = [:referrer_hostname, :referrer_path]
+          else
+            raise ArgumentError
+          end
+        when *display_columns
+          group_by = [params[:group_by]]
+          pluck_columns = [params[:group_by]]
+        else
+          raise ArgumentError
+        end
+      end
+
+      if difference_where_conditions
+        pluck_columns = [aggregate_sql_field]
+      else
+        pluck_columns << aggregate_sql_field
       end
 
       tracked_requests
-        .group(*group_by_columns)
+        .group(*group_by)
         .pluck(*pluck_columns)
     end
 
@@ -149,6 +169,10 @@ module RailsLocalAnalytics
         prev_end_date = end_date - duration
       end
       return [prev_start_date, prev_end_date]
+    end
+
+    def display_columns
+      @display_columns ||= @klass.display_columns
     end
 
   end

@@ -69,16 +69,42 @@ RSpec.describe RailsLocalAnalytics::DashboardController, type: :request do
     context "params[:group_by]" do
       it "raises error when field name is invalid" do
         expect {
-          get rails_local_analytics.tracked_requests_path(type: :site, filter: "id==some-value")
+          get rails_local_analytics.tracked_requests_path(type: :site, group_by: "id==some-value")
         }.to raise_error(ArgumentError)
       end
 
-      it "renders" do
+      it "groups the data" do
         get rails_local_analytics.tracked_requests_path(type: :site, group_by: "platform")
         expect(response.status).to eq(200)
+        expect(response.body).to have_tag(:th, text: /Platform/)
+        expect(response.body).not_to have_tag(:th, text: /Browser Engine/)
 
         get rails_local_analytics.tracked_requests_path(type: :page, group_by: "referrer_path")
         expect(response.status).to eq(200)
+        expect(response.body).to have_tag(:th, text: /Referrer Path/)
+        expect(response.body).not_to have_tag(:th, text: /Referrrer Hostname/)
+      end
+
+      it "handles special fields" do
+        expect {
+          get rails_local_analytics.tracked_requests_path(type: :site, group_by: "url_hostname_and_path")
+        }.to raise_error(ArgumentError)
+
+        expect {
+          get rails_local_analytics.tracked_requests_path(type: :site, group_by: "referrer_hostname_and_path")
+        }.to raise_error(ArgumentError)
+
+        get rails_local_analytics.tracked_requests_path(type: :page, group_by: "url_hostname_and_path")
+        expect(response.status).to eq(200)
+        expect(response.body).to have_tag(:th, text: /URL Hostname/)
+        expect(response.body).to have_tag(:th, text: /URL Path/)
+        expect(response.body).not_to have_tag(:th, text: /Referrer Hostname/)
+
+        get rails_local_analytics.tracked_requests_path(type: :page, group_by: "referrer_hostname_and_path")
+        expect(response.status).to eq(200)
+        expect(response.body).to have_tag(:th, text: /Referrer Hostname/)
+        expect(response.body).to have_tag(:th, text: /Referrer Path/)
+        expect(response.body).not_to have_tag(:th, text: /URL Hostname/)
       end
     end
 
