@@ -16,7 +16,7 @@
   group_by_opts += display_columns.map{|x| [x.titleize.sub("Url ", "URL "), x] }
 
   if display_columns.include?("url_hostname") && display_columns.include?("url_path")
-    index = group_by_opts.index(["URL Path", "url_path"])
+    index = group_by_opts.index(["URL Hostname", "url_hostname"])
     group_by_opts.insert(
       index,
       ["URL Hostname and Path", "url_hostname_and_path"],
@@ -24,7 +24,7 @@
   end
 
   if display_columns.include?("referrer_hostname") && display_columns.include?("referrer_path")
-    index = group_by_opts.index(["Referrer Path", "referrer_path"])
+    index = group_by_opts.index(["Referrer Hostname", "referrer_hostname"])
     group_by_opts.insert(
       index,
       ["Referrer Hostname and Path", "referrer_hostname_and_path"],

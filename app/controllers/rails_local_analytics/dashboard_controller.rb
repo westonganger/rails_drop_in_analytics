@@ -24,7 +24,7 @@ module RailsLocalAnalytics
         @start_date = Date.today
       end
 
-      if params[:end_date]
+      if params[:end_date].present?
         @end_date = Date.parse(params[:end_date])
       else
         @end_date = Date.today
@@ -116,31 +116,29 @@ module RailsLocalAnalytics
       end
 
       if params[:group_by].blank?
-        group_by = display_columns.dup
         pluck_columns = display_columns.dup
       else
         case params[:group_by]
         when "url_hostname_and_path"
           if display_columns.include?("url_hostname") && display_columns.include?("url_path")
-            group_by = ["(url_hostname + url_path)"]
             pluck_columns = [:url_hostname, :url_path]
           else
             raise ArgumentError
           end
         when "referrer_hostname_and_path"
           if display_columns.include?("referrer_hostname") && display_columns.include?("referrer_path")
-            group_by = ["(referrer_hostname + referrer_path)"]
             pluck_columns = [:referrer_hostname, :referrer_path]
           else
             raise ArgumentError
           end
         when *display_columns
-          group_by = [params[:group_by]]
           pluck_columns = [params[:group_by]]
         else
           raise ArgumentError
         end
       end
+
+      group_by = pluck_columns.dup
 
       if difference_where_conditions
         pluck_columns = [aggregate_sql_field]
