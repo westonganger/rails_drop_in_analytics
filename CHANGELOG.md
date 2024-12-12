@@ -1,7 +1,11 @@
 # CHANGELOG
 
 ### Unreleased
-- [View Diff](https://github.com/westonganger/rails_local_analytics/compare/v0.2.1...master)
+- [View Diff](https://github.com/westonganger/rails_local_analytics/compare/v0.2.2...master)
+- Nothing yet
+
+### v0.2.2 - Dec 12 2024
+- [View Diff](https://github.com/westonganger/rails_local_analytics/compare/v0.2.1...v0.2.2)
 - [#14](https://github.com/westonganger/rails_local_analytics/pull/14) - Fix bugs with group by and end date
 - [#13](https://github.com/westonganger/rails_local_analytics/pull/13) - Add ability to group by hostname and path combined
 
