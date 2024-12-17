@@ -1,7 +1,11 @@
 # CHANGELOG
 
 ### Unreleased
-- [View Diff](https://github.com/westonganger/rails_local_analytics/compare/v0.2.2...master)
+- [View Diff](https://github.com/westonganger/rails_local_analytics/compare/v0.2.3...master)
+- Nothing yet
+
+### Unreleased
+- [View Diff](https://github.com/westonganger/rails_local_analytics/compare/v0.2.2...v0.2.3)
 - [#15](https://github.com/westonganger/rails_local_analytics/pull/15) - Fix issue with sprockets manifest compilation due to gemspec.files directive excluding hidden .keep files in images and javascripts folders
 
 ### v0.2.2 - Dec 12 2024
