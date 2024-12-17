@@ -14,7 +14,7 @@ Gem::Specification.new do |spec|
   spec.description = spec.summary
   spec.license     = "MIT"
 
-  spec.files = Dir["{app,config,db,lib,public}/**/*", "LICENSE", "Rakefile", "README.md"]
+  spec.files = Dir["{app,config,db,lib,public}/**/*", "LICENSE", "Rakefile", "README.md", "app/assets/**/{.keep,.gitkeep}"]
 
   spec.required_ruby_version = ">= 2.6"
 
