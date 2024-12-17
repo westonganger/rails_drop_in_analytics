@@ -73,6 +73,7 @@ class CreateAnalyticsTables < ActiveRecord::Migration[6.0]
   end
 end
 ```
+The reason we store our anayltics in two separate tables to keep the cardinality of our data low. You may use only a single table but I recommend you try the 2 table approach first and see if it meets your needs. See the performance optimization section for more details.
 
 Add the route for the analytics dashboard at the desired endpoint:
 
@@ -81,11 +82,11 @@ Add the route for the analytics dashboard at the desired endpoint:
 mount RailsLocalAnalytics::Engine, at: "/admin/analytics"
 ```
 
-Its generally recomended to use a background job (especially since we now have [`solid_queue`](https://github.com/rails/solid_queue/)). If you would like to disable background jobs you can use the following config:
+Its generally recomended to use a background job (especially since we now have [`solid_queue`](https://github.com/rails/solid_queue/)). If you would like to disable background jobs you can use the following config option:
 
 ```ruby
 # config/initializers/rails_local_analytics.rb
-RailsLocalAnalytics.config.background_jobs = false # defaults to true
+# RailsLocalAnalytics.config.background_jobs = false # defaults to true
 ```
 
 The next step is to collect traffic.
@@ -157,6 +158,7 @@ There are a few techniques that you can use to tailor the database for your part
   *  Consider just storing "local" or nil instead if the request originated from your website
 - `platform` and `browser_engine` columns
   * Consider dropping either of these if you do not need this information
+- If you want to store everything in one table (which I dont think most people actually need) then you can simply only create one table (I recommend `tracked_requests_by_day_page`) with all of the fields from both tables. This gem will automatically populate all the same fields. You should NOT need to use `:custom_attributes` in this scenario.
 
 ## Usage where a request object is not available
 
