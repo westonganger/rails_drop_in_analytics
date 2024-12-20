@@ -73,7 +73,7 @@ class CreateAnalyticsTables < ActiveRecord::Migration[6.0]
   end
 end
 ```
-The reason we store our anayltics in two separate tables to keep the cardinality of our data low. You may use only a single table but I recommend you try the 2 table approach first and see if it meets your needs. See the performance optimization section for more details.
+The reason we store our analytics in two separate tables to keep the cardinality of our data low. You are permitted to store everything in only one table but I recommend you try the 2 table approach first and see if it meets your needs. See the performance optimization section for more details.
 
 Add the route for the analytics dashboard at the desired endpoint:
 
