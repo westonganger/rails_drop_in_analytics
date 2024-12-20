@@ -29,7 +29,7 @@ module RailsLocalAnalytics
       json_str = JSON.generate(json_hash) # convert to json string so that its compatible with all job backends
       RecordRequestJob.perform_later(json_str)
     else
-      RecordRequestJob.new.perform(json_hash)
+      RecordRequestJob.new.perform(json_hash.deep_stringify_keys)
     end
   end
 
@@ -44,11 +44,18 @@ module RailsLocalAnalytics
   end
 
   class Config
-    @@background_jobs = true
+    DEFAULTS = {
+      background_jobs: true,
+    }.freeze
+
     mattr_reader :background_jobs
 
     def self.background_jobs=(val)
       @@background_jobs = !!val
+    end
+
+    DEFAULTS.each do |k,v|
+      self.send("#{k}=", v)
     end
   end
 

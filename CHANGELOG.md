@@ -2,7 +2,7 @@
 
 ### Unreleased
 - [View Diff](https://github.com/westonganger/rails_local_analytics/compare/v0.2.3...master)
-- Nothing yet
+- [#18](https://github.com/westonganger/rails_local_analytics/pull/18) - Fix KeyError when using `config.background_jobs = false` due to not stringifying the keys
 
 ### v0.2.3 - Dec 17 2024
 - [View Diff](https://github.com/westonganger/rails_local_analytics/compare/v0.2.2...v0.2.3)
