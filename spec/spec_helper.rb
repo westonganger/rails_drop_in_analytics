@@ -36,6 +36,10 @@ RSpec.configure do |config|
     DatabaseCleaner.cleaning do
       example.run
     end
+
+    RailsLocalAnalytics::Config::DEFAULTS.each do |k,v|
+      RailsLocalAnalytics.config.send("#{k}=", v)
+    end
   end
 
   require 'rails-controller-testing'
