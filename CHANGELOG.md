@@ -4,7 +4,7 @@
 - [View Diff](https://github.com/westonganger/rails_local_analytics/compare/v1.0.0...master)
 - Nothing yet
 
-### v1.0.0 - Jan 17 2024
+### v1.0.0 - Jan 17 2025
 - [View Diff](https://github.com/westonganger/rails_local_analytics/compare/v0.2.4...v1.0.0)
 - There are no functional changes. This release v1.0.0 is to signal that its stable and ready for widespread usage.
 
