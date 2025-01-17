@@ -1,10 +1,14 @@
 # CHANGELOG
 
 ### Unreleased
-- [View Diff](https://github.com/westonganger/rails_local_analytics/compare/v0.2.4...master)
+- [View Diff](https://github.com/westonganger/rails_local_analytics/compare/v1.0.0...master)
 - Nothing yet
 
-### Unreleased
+### v1.0.0 - Jan 17 2024
+- [View Diff](https://github.com/westonganger/rails_local_analytics/compare/v0.2.4...v1.0.0)
+- There are no functional changes. This release v1.0.0 is to signal that its stable and ready for widespread usage.
+
+### v0.2.4 - Dec 20 2024
 - [View Diff](https://github.com/westonganger/rails_local_analytics/compare/v0.2.3...v0.2.4)
 - [#18](https://github.com/westonganger/rails_local_analytics/pull/18) - Fix KeyError when using `config.background_jobs = false` due to not stringifying the keys
 
