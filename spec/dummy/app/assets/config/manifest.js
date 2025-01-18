@@ -1,3 +1,1 @@
-//= link_tree ../images
-//= link_directory ../stylesheets .css
-//= link rails_local_analytics_manifest.js
+// this file is only present to make Rails 6.1 and below work in our CI
