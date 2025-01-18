@@ -4,7 +4,7 @@
 - [View Diff](https://github.com/westonganger/rails_local_analytics/compare/v1.0.0...master)
 - Nothing yet
 
-### v1.0.0 - Jan 17 2025
+### v1.0.1 - Jan 17 2025
 - [View Diff](https://github.com/westonganger/rails_local_analytics/compare/v1.0.0...v1.0.1)
 - [#22](https://github.com/westonganger/rails_local_analytics/pull/22) - Completely remove usage of sprockets or propshaft
 
