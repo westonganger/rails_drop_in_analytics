@@ -1,5 +1,7 @@
 require_relative 'boot'
 
+require "logger" # Fix for Rails 7.0 and below, https://github.com/rails/rails/pull/54264
+
 require 'rails/all'
 
 Bundler.require(*Rails.groups)
@@ -16,7 +18,7 @@ module Dummy
     # Application configuration can go into files in config/initializers
     # -- all .rb files in that directory are automatically loaded after loading
     # the framework and any gems in your application.
-    
+
     config.eager_load = true ### to catch more bugs in development/test environments
   end
 end
